@@ -2,7 +2,7 @@
 This repository is devoted to the Python implementation of Polar codes.
 
 ## Motivation
-When I faced the need to use Polar codes in my Master's thesis, I hadn't found any open-source Python implementation.
+When I faced the need to use Polar codes in my Master's thesis, I hadn't found any open-source Python implementation (but now I there are some of them).
 That was quite a surprise since I just wanted to download a library and start my research.  
 Hence, it took me to implement Polar codes myself.
 Now, I want to help anybody who will further have a need in Python implementation and I start this project.
@@ -32,8 +32,9 @@ Currently this repository is work-in-progress. However, perfectly it should cont
         - [x] **List decoder + CRC (SCL) ** — a list version of SC decoder proposed by Tal-Vardy. Its efficiency increases with list size. 
         Moreover, if a CRC was added to an initial codeword it may be used just like in Tal-Vardy's paper.
         <span style="color:red">some **Thorough testing is required**text</span>!
-- [ ] **Channel** — Polar codes are channel-specific codes and thus each instance.
-- [ ] **BscChannel** — 
-- [ ] **BpskAwgnChannel** — 
+- [ ] **Channel** — Polar codes are channel-specific codes and I decided to pass to each instance of Polar code an instance of underlying channel. 
+A "Channel" is an abstract class forcing all its derivatives to implement several methods.
+- [ ] **BscChannel** — an implementation of Channel methods for case of Binary Symmetric Channel (BSC).
+- [ ] **BpskAwgnChannel** — an implemetation of Chanel methods for case of AWGN channel combined with BPSK.
 
 All algorithms are based on papers, references to them will be added further.
