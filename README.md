@@ -38,3 +38,12 @@ A "Channel" is an abstract class forcing all its derivatives to implement severa
 - [ ] **BpskAwgnChannel** — an implemetation of Chanel methods for case of AWGN channel combined with BPSK.
 
 All algorithms are based on papers, references to them will be added further.
+
+## How to use
+
+The package itself is located in "polar_codes" directory. 
+Thus, you may copy it and then import a PolarCode class as follows.
+    
+    from polar_codes.polar_code import PolarCode
+    
+Probaly, it is not as pretty as one may want and I will fix it further.
