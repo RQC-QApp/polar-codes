@@ -29,9 +29,9 @@ Currently this repository is work-in-progress. However, perfectly it should cont
         It employs no optimization and thus has O(N^2) complexity.
         - [x] **Fast Successive Cancellation (FSC)** — an advanced version of successive cancellation decoder, also proposed by Arikan, has O(NlogN) complexity.
         - [x] **Tal-Vardy (TVD)** — an implementation of SC decoder from Tal-Vardy paper. Was added to get used to Tal-Vardy notion. 
-        - [x] **List decoder + CRC (SCL) ** — a list version of SC decoder proposed by Tal-Vardy. Its efficiency increases with list size. 
+        - [x] **List decoder + CRC (SCL)** — a list version of SC decoder proposed by Tal-Vardy. Its efficiency increases with list size. 
         Moreover, if a CRC was added to an initial codeword it may be used just like in Tal-Vardy's paper.
-        <span style="color:red">some **Thorough testing is required**text</span>!
+        **Thorough testing is required**!
 - [ ] **Channel** — Polar codes are channel-specific codes and I decided to pass to each instance of Polar code an instance of underlying channel. 
 A "Channel" is an abstract class forcing all its derivatives to implement several methods.
 - [ ] **BscChannel** — an implementation of Channel methods for case of Binary Symmetric Channel (BSC).
