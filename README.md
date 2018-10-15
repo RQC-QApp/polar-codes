@@ -11,7 +11,8 @@ Comments, remarks and pull requests are welcome!
 
 ## What is inside
 
-Currently this repository is work-in-progress. However, perfectly it should contain the following:
+Currently this repository is work-in-progress. 
+In particular, the following funcionalty is implemented, but comments are still are to be written and some features shall be tested.
 
 - [x] **Polar code** — a principal class which is responsible for encoding and decoding.
  It has the following public methods.
@@ -32,10 +33,10 @@ Currently this repository is work-in-progress. However, perfectly it should cont
         - [x] **List decoder + CRC (SCL)** — a list version of SC decoder proposed by Tal-Vardy. Its efficiency increases with list size. 
         Moreover, if a CRC was added to an initial codeword it may be used just like in Tal-Vardy's paper.
         **Thorough testing is required**!
-- [ ] **Channel** — Polar codes are channel-specific codes and I decided to pass to each instance of Polar code an instance of underlying channel. 
+- [x] **Channel** — Polar codes are channel-specific codes and I decided to pass to each instance of Polar code an instance of underlying channel. 
 A "Channel" is an abstract class forcing all its derivatives to implement several methods.
-- [ ] **BscChannel** — an implementation of Channel methods for case of Binary Symmetric Channel (BSC).
-- [ ] **BpskAwgnChannel** — an implemetation of Chanel methods for case of AWGN channel combined with BPSK.
+- [x] **BscChannel** — an implementation of Channel methods for case of Binary Symmetric Channel (BSC).
+- [x] **BpskAwgnChannel** — an implemetation of Chanel methods for case of AWGN channel combined with BPSK.
 
 All algorithms are based on papers, references to them will be added further.
 
