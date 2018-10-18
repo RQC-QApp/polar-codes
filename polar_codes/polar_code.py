@@ -98,12 +98,12 @@ class PolarCode:
         self._b_arr = None
 
         # Attributes required for the list Tal-Vardy decoder
-        self._inactive_path_indices = []
+        self._inactive_path_indices = None
         self._active_path = None
-        self._array_pointer_p = [[] for _ in range(self._n + 1)]
-        self._array_pointer_c = [[] for _ in range(self._n + 1)]
+        self._array_pointer_p = None
+        self._array_pointer_c = None
         self._path_index_to_array_index = None
-        self._inactive_array_indices = [[] for _ in range(self._n + 1)]
+        self._inactive_array_indices = None
         self._array_reference_count = None
 
     def _construct(self, construction_method):
@@ -701,6 +701,17 @@ class PolarCode:
         return self._channel.get_ber() if output_bit ^ input_bit else (1.0 - self._channel.get_ber())
 
     def initialize_data_structures(self, L):
+
+        # These data structured were initialized only once and it possibly
+        # lead to memory leak. This issue is currently being tested but I will temporarily place
+        # this code here. Hope it works
+        self._inactive_path_indices = []
+        self._active_path = None
+        self._array_pointer_p = [[] for _ in range(self._n + 1)]
+        self._array_pointer_c = [[] for _ in range(self._n + 1)]
+        self._path_index_to_array_index = None
+        self._inactive_array_indices = [[] for _ in range(self._n + 1)]
+        self._array_reference_count = None
 
         self._path_index_to_array_index = np.zeros((self._n + 1, L), dtype=np.uint8)
         self._array_reference_count = np.zeros((self._n + 1, L), dtype=np.uint8)
