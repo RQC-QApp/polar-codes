@@ -701,10 +701,11 @@ class PolarCode:
         return self._channel.get_ber() if output_bit ^ input_bit else (1.0 - self._channel.get_ber())
 
     def initialize_data_structures(self, L):
+        """
 
-        # These data structured were initialized only once and it possibly
-        # lead to memory leak. This issue is currently being tested but I will temporarily place
-        # this code here. Hope it works
+        :param L:
+        :return:
+        """
         self._inactive_path_indices = []
         self._active_path = None
         self._array_pointer_p = [[] for _ in range(self._n + 1)]
@@ -968,7 +969,10 @@ class PolarCode:
         for l in range(L):
             if self._active_path[l]:
                 path_output = self.polar_transform(self.get_array_pointer_c(0, l)[:, 0])
-                if np.array_equal(self._calculate_CRC(path_output[:self._K_minus_CRC]), path_output[self._K_minus_CRC:]):
+                path_output_info_bits = path_output[list(self._info_bits_positions)]
+
+                if np.array_equal(self._calculate_CRC(path_output_info_bits[:self._K_minus_CRC]),
+                                  path_output_info_bits[self._K_minus_CRC:]):
                     is_CRC_present = True
                     c_curr = self.get_array_pointer_c(self._n, l)
                     p_curr = self.get_array_pointer_p(self._n, l)
