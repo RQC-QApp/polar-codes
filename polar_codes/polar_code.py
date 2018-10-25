@@ -636,7 +636,7 @@ class PolarCode:
         self._p_arr = np.zeros((self._n + 1, self._N, 2), dtype=np.longfloat)
         self._b_arr = np.zeros((self._n + 1, self._N), dtype=np.uint8)
 
-        vec_out_bit_prob = np.vectorize(self.out_bit_prob)
+        vec_out_bit_prob = np.vectorize(self._out_bit_prob)
         self._p_arr[0, :, 0] = vec_out_bit_prob(y_message, 0)
         self._p_arr[0, :, 1] = vec_out_bit_prob(y_message, 1)
 
@@ -697,10 +697,10 @@ class PolarCode:
             if (psi % 2) == 1:
                 self._recursively_update_b_arr(l - 1, psi)
 
-    def out_bit_prob(self, output_bit, input_bit):
+    def _out_bit_prob(self, output_bit, input_bit):
         return self._channel.get_ber() if output_bit ^ input_bit else (1.0 - self._channel.get_ber())
 
-    def initialize_data_structures(self, L):
+    def _initialize_data_structures(self, L):
         """
 
         :param L:
@@ -728,7 +728,7 @@ class PolarCode:
         for l in range(L):
             self._inactive_path_indices.append(l)
 
-    def assign_initial_path(self):
+    def _assign_initial_path(self):
         """
 
         :return: Integer index of initial path
@@ -743,7 +743,7 @@ class PolarCode:
 
         return l
 
-    def clone_path(self, l):
+    def _clone_path(self, l):
         """
 
         :param l: An integer index of path to clone
@@ -759,7 +759,7 @@ class PolarCode:
 
         return l_dash
 
-    def kill_path(self, l):
+    def _kill_path(self, l):
         """
 
         :param l: An integer index of path to kill
@@ -774,7 +774,7 @@ class PolarCode:
             if self._array_reference_count[lam, s] == 0:
                 self._inactive_array_indices[lam].append(s)
 
-    def get_array_pointer_p(self, lam, l):
+    def _get_array_pointer_p(self, lam, l):
         """
 
         :param lam: An integer number of layer
@@ -795,7 +795,7 @@ class PolarCode:
 
         return self._array_pointer_p[lam][s_dash]
 
-    def get_array_pointer_c(self, lam, l):
+    def _get_array_pointer_c(self, lam, l):
         """
 
         :param lam: An integer number of layer
@@ -816,7 +816,7 @@ class PolarCode:
 
         return self._array_pointer_c[lam][s_dash]
 
-    def recursively_calc_p(self, lam, phi, L):
+    def _recursively_calc_p(self, lam, phi, L):
         """
 
         :param lam: An integer index of current layer
@@ -830,14 +830,14 @@ class PolarCode:
         psi = phi // 2
 
         if (phi % 2) == 0:
-            self.recursively_calc_p(lam - 1, psi, L)
+            self._recursively_calc_p(lam - 1, psi, L)
 
         sgm = 0.0
         for l in range(L):
             if self._active_path[l]:
-                p_curr = self.get_array_pointer_p(lam, l)
-                p_prev = self.get_array_pointer_p(lam - 1, l)
-                c_curr = self.get_array_pointer_c(lam, l)
+                p_curr = self._get_array_pointer_p(lam, l)
+                p_prev = self._get_array_pointer_p(lam - 1, l)
+                c_curr = self._get_array_pointer_c(lam, l)
 
                 for br in range(2 ** (self._n - lam)):
                     if (phi % 2) == 0:
@@ -858,12 +858,12 @@ class PolarCode:
 
         for l in range(L):
             if self._active_path[l]:
-                p_curr = self.get_array_pointer_p(lam, l)
+                p_curr = self._get_array_pointer_p(lam, l)
                 for br in range(2 ** (self._n - lam)):
                     p_curr[br, 0] /= sgm
                     p_curr[br, 1] /= sgm
 
-    def recursively_update_c(self, lam, phi, L):
+    def _recursively_update_c(self, lam, phi, L):
         """
 
         :param lam: An integer index of current layer
@@ -877,17 +877,17 @@ class PolarCode:
 
             for l in range(L):
                 if self._active_path[l]:
-                    c_curr = self.get_array_pointer_c(lam, l)
-                    c_prev = self.get_array_pointer_c(lam - 1, l)
+                    c_curr = self._get_array_pointer_c(lam, l)
+                    c_prev = self._get_array_pointer_c(lam - 1, l)
 
                     for br in range(2 ** (self._n - lam)):
                         c_prev[2 * br][psi % 2] = c_curr[br][0] ^ c_curr[br][1]
                         c_prev[2 * br + 1][psi % 2] = c_curr[br][1]
 
             if psi % 2 == 1:
-                self.recursively_update_c(lam - 1, psi, L)
+                self._recursively_update_c(lam - 1, psi, L)
 
-    def continue_paths_unfrozen_bit(self, phi, L):
+    def _continue_paths_unfrozen_bit(self, phi, L):
         """
 
         :param phi: An integer index of current phase
@@ -898,7 +898,7 @@ class PolarCode:
         i = 0
         for l in range(L):
             if self._active_path[l]:
-                p_curr = self.get_array_pointer_p(self._n, l)
+                p_curr = self._get_array_pointer_p(self._n, l)
                 prob_forks[l] = p_curr[0, 0]
                 prob_forks[l + L] = p_curr[0, 1]
                 i += 1
@@ -914,16 +914,16 @@ class PolarCode:
         for l in range(L):
             if self._active_path[l]:
                 if not cont_forks[l][0] and not cont_forks[l][1]:
-                    self.kill_path(l)
+                    self._kill_path(l)
 
         for l in range(L):
             if not cont_forks[l][0] and not cont_forks[l][1]:
                 continue
-            c_curr = self.get_array_pointer_c(self._n, l)
+            c_curr = self._get_array_pointer_c(self._n, l)
             if cont_forks[l][0] and cont_forks[l][1]:
                 c_curr[0][phi % 2] = 0
-                l_dash = self.clone_path(l)
-                c_curr = self.get_array_pointer_c(self._n, l_dash)
+                l_dash = self._clone_path(l)
+                c_curr = self._get_array_pointer_c(self._n, l_dash)
                 c_curr[0][phi % 2] = 1
             elif cont_forks[l][0]:
                 c_curr[0][phi % 2] = 0
@@ -932,6 +932,8 @@ class PolarCode:
 
     def _scl_decode(self, y_message, frozen_bits=None, L=32):
         """
+        Implements the SC decoder using the notations from the Tal and Vardy paper. This method will be further
+        extended to the Tal-Vardy list decoder.
 
         :param y_message: An integer array of N bits which are to be decoded;
         :param frozen_bits: An array of bits which should be counted as frozen during the decoding (None if they
@@ -939,27 +941,27 @@ class PolarCode:
         :param L: An integer size of decoding list;
         :return: An integer array of N decoded bits (u message, not x).
         """
-        self.initialize_data_structures(L)
-        l = self.assign_initial_path()
-        p_zero = self.get_array_pointer_p(0, l)
+        self._initialize_data_structures(L)
+        l = self._assign_initial_path()
+        p_zero = self._get_array_pointer_p(0, l)
 
         for br in range(self._N):
-            p_zero[br, 0] = self.out_bit_prob(y_message[br], 0)
-            p_zero[br, 1] = self.out_bit_prob(y_message[br], 1)
+            p_zero[br, 0] = self._out_bit_prob(y_message[br], 0)
+            p_zero[br, 1] = self._out_bit_prob(y_message[br], 1)
 
         for phi in range(self._N):
-            self.recursively_calc_p(self._n, phi, L)
+            self._recursively_calc_p(self._n, phi, L)
 
             if phi in self._frozen_bits_positions:
                 for l in range(L):
                     if self._active_path[l]:
-                        c_curr = self.get_array_pointer_c(self._n, l)
+                        c_curr = self._get_array_pointer_c(self._n, l)
                         c_curr[0, phi % 2] = frozen_bits[self._frozen_bits_positions.index(phi)] if frozen_bits is not None else 0
             else:
-                self.continue_paths_unfrozen_bit(phi, L)
+                self._continue_paths_unfrozen_bit(phi, L)
 
             if (phi % 2) == 1:
-                self.recursively_update_c(self._n, phi, L)
+                self._recursively_update_c(self._n, phi, L)
 
         l_dash = 0
         p_dash = 0
@@ -968,14 +970,14 @@ class PolarCode:
 
         for l in range(L):
             if self._active_path[l]:
-                path_output = self.polar_transform(self.get_array_pointer_c(0, l)[:, 0])
+                path_output = self.polar_transform(self._get_array_pointer_c(0, l)[:, 0])
                 path_output_info_bits = path_output[list(self._info_bits_positions)]
 
                 if np.array_equal(self._calculate_CRC(path_output_info_bits[:self._K_minus_CRC]),
                                   path_output_info_bits[self._K_minus_CRC:]):
                     is_CRC_present = True
-                    c_curr = self.get_array_pointer_c(self._n, l)
-                    p_curr = self.get_array_pointer_p(self._n, l)
+                    c_curr = self._get_array_pointer_c(self._n, l)
+                    p_curr = self._get_array_pointer_p(self._n, l)
                     decoding_list.append(path_output)
                     if p_dash < p_curr[0, c_curr[0, 1]]:
                         l_dash = l
@@ -984,12 +986,12 @@ class PolarCode:
         if not is_CRC_present:
             for l in range(L):
                 if self._active_path[l]:
-                    c_curr = self.get_array_pointer_c(self._n, l)
-                    p_curr = self.get_array_pointer_p(self._n, l)
-                    decoding_list.append(self.polar_transform(self.get_array_pointer_c(0, l)[:, 0]))
+                    c_curr = self._get_array_pointer_c(self._n, l)
+                    p_curr = self._get_array_pointer_p(self._n, l)
+                    decoding_list.append(self.polar_transform(self._get_array_pointer_c(0, l)[:, 0]))
                     if p_dash < p_curr[0, c_curr[0, 1]]:
                         l_dash = l
                         p_dash = p_curr[0, c_curr[0, 1]]
 
-        c_zero = self.get_array_pointer_c(0, l_dash)
+        c_zero = self._get_array_pointer_c(0, l_dash)
         return self.polar_transform(c_zero[:, 0])
