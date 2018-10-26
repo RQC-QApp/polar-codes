@@ -37,6 +37,10 @@ class PolarCode:
         frozen_bits_positions: A tuple of frozen bits (equal to 0) indices in the codeword.
 
     """
+    CRC_polynomials = {
+        8: np.asarray([1, 1, 1, 0, 1, 0, 1, 0, 1], dtype='uint8'),
+        16: np.asarray([1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1], dtype='uint8'),
+    }
 
     def __init__(self, n, K, channel, construction_method, CRC_len=0):
         """
@@ -58,7 +62,6 @@ class PolarCode:
             print('Wrong length of CRC was passed to the {} constructor.'
                   'Only 8-bit CRC is enable now'.format(self.__class__.__name__))
         self._K = self._K_minus_CRC + self._CRC_len
-        self._CRC_polynomial = np.asarray([1, 1, 1, 0, 1, 0, 1, 0, 1], dtype='uint8')
 
         if not isinstance(self._channel, Channel):
             print('Wrong channel was passed to the {} constructor. '
@@ -319,7 +322,7 @@ class PolarCode:
 
             while len(padded_info_bits[0:self._K_minus_CRC].nonzero()[0]):
                 cur_shift = (padded_info_bits != 0).argmax(axis=0)
-                padded_info_bits[cur_shift: cur_shift + self._CRC_len + 1] ^= self._CRC_polynomial
+                padded_info_bits[cur_shift: cur_shift + self._CRC_len + 1] ^= PolarCode.CRC_polynomials[self._CRC_len]
 
             return padded_info_bits[self._K_minus_CRC:]
 

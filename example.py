@@ -13,7 +13,7 @@ def main():
     # it seems to be optimal. Also, we pass an instance of channel to the code and set length of CRC to 8 bits
     n = 8
     K = 115
-    code = PolarCode(n=n, K=K, construction_method='PW', channel=channel, CRC_len=8)
+    code = PolarCode(n=n, K=K, construction_method='PW', channel=channel, CRC_len=16)
 
     # Third, we generate informational bits
     u_message = np.asarray([0 if np.random.random_sample() > 0.5 else 1 for _ in range(0, K)], dtype='uint8')
