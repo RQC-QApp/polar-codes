@@ -6,6 +6,8 @@ from sys import exit
 
 from .channels.channel import Channel
 
+from . import PACKAGE_DIRECTORY
+
 CHECK_NODE_TANH_THRES = 44
 
 
@@ -149,10 +151,14 @@ class PolarCode:
 
     def _get_construction_path(self):
         """
+        Returns the path to a file containing a construction of the code (i.e. indices of bits in codeword
+        sorted in the descending order of their "quality". The path depends on codeword length and the
+        chosen construction method. All construction are stored in the package folder.
 
-        :return:
+        :return: A string with absolute path to the code construction.
         """
-        construction_path = './polar_codes_constructions/'
+        construction_path = PACKAGE_DIRECTORY
+        construction_path += '/polar_codes_constructions/'
         construction_path += 'N={}/'.format(self._N)
         construction_path += '{}/'.format(self._channel.get_suffix())
 
