@@ -107,3 +107,4 @@ venv.bak/
 .idea/
 .DS_Store
 polar_codes_constructions
+./polar_codes/polar_codes_constructions
