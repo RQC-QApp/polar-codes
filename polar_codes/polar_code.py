@@ -281,17 +281,14 @@ class PolarCode:
         """
         return u_message[np.array(self._frozen_bits_positions)]
 
-    def encode(self, info_bits, frozen_bits=None):
+    def extend_info_bits(self, info_bits, frozen_bits=None):
         """
-        Encodes K information bits into the N bits of the codeword message by padding
-        them with frozen bits and by using the polar transform after that (resembles FFT).
+        Interleaves K informational bits and their CRC with frozen bits such that a u_message is obtained.
 
-        :param info_bits: An integer array of K information bits;
-        :param frozen_bits: An array of bits which should be set as frozen during the encoding (None if they
-        are treated all zero as in the original Arikan's paper);
-        :return: x_message -- result of encoding.
+        :param info_bits:
+        :param frozen_bits:
+        :return: u_message — result of extension.
         """
-
         if len(info_bits) != self._K_minus_CRC:
             print('Unable to encode message of {} info bits instead of {}'.format(len(info_bits), self._K))
             exit(-1)
@@ -309,6 +306,20 @@ class PolarCode:
 
         # Set the values of information bits in the u_message.
         u_message[np.array(self._info_bits_positions)] = np.concatenate([info_bits, self._calculate_CRC(info_bits)])
+
+        return u_message
+
+    def encode(self, info_bits, frozen_bits=None):
+        """
+        Encodes K information bits into the N bits of the codeword message by padding
+        them with frozen bits and by using the polar transform after that (resembles FFT).
+
+        :param info_bits: An integer array of K information bits;
+        :param frozen_bits: An array of bits which should be set as frozen during the encoding (None if they
+        are treated all zero as in the original Arikan's paper);
+        :return: x_message -- result of encoding.
+        """
+        u_message = self.extend_info_bits(info_bits, frozen_bits)
 
         # Apply the polar transform to the u_message.
         x_message = PolarCode.polar_transform(u_message)
