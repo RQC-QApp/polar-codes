@@ -993,14 +993,7 @@ class PolarCode:
                         p_dash = p_curr[0, c_curr[0, 1]]
 
         if not is_CRC_present:
-            for l in range(L):
-                if self._active_path[l]:
-                    c_curr = self._get_array_pointer_c(self._n, l)
-                    p_curr = self._get_array_pointer_p(self._n, l)
-                    decoding_list.append(self.polar_transform(self._get_array_pointer_c(0, l)[:, 0]))
-                    if p_dash < p_curr[0, c_curr[0, 1]]:
-                        l_dash = l
-                        p_dash = p_curr[0, c_curr[0, 1]]
+            return None
 
         c_zero = self._get_array_pointer_c(0, l_dash)
         return self.polar_transform(c_zero[:, 0])
