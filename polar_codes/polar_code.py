@@ -375,9 +375,9 @@ class PolarCode:
         """
         try:
             if decoding_method == 'SCL':
-                return self.get_message_info_bits(self._scl_decode(message, frozen_bits, list_size))[0:self._K_minus_CRC]
+                return self._scl_decode(message, frozen_bits, list_size)
             else:
-                return self.get_message_info_bits(self._decoding_methods[decoding_method](message, frozen_bits))[0:self._K_minus_CRC]
+                return self._decoding_methods[decoding_method](message, frozen_bits)
         except KeyError as wrong_key:
             print('Unable to decode message: no {} method was provided'.format(wrong_key))
             exit(-1)
