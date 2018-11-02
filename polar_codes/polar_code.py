@@ -60,9 +60,10 @@ class PolarCode:
         self._construction_method = construction_method
         self._CRC_len = CRC_len
 
-        if not (CRC_len == 0 or CRC_len == 8):
+        if not (CRC_len in PolarCode.CRC_polynomials.keys() or CRC_len == 0):
             print('Wrong length of CRC was passed to the {} constructor.'
-                  'Only 8-bit CRC is enable now'.format(self.__class__.__name__))
+                  'Supported CRC lengths are 0 and {}'.format(self.__class__.__name__,
+                                                              PolarCode.CRC_polynomials.keys()))
         self._K = self._K_minus_CRC + self._CRC_len
 
         if not isinstance(self._channel, Channel):
